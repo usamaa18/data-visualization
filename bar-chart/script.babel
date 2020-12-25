@@ -61,7 +61,7 @@ xhr.onload = function() {
         .text("Year");
 
     // y-axis
-    const yAxis = d3.axisLeft(yScale);
+    const yAxis = d3.axisLeft(yScale).tickFormat(d => "$"+d);
     svg.append("g")
         .attr("id", "y-axis")
         .attr("transform", "translate(" + (paddingLeft) + ", 0)")
@@ -73,7 +73,7 @@ xhr.onload = function() {
         .attr("y", 20)
         .attr("text-anchor", "middle")
         .style("transform", "rotate(-90deg)")
-        .text("Gross Domestic Product (USD)");
+        .text("Gross Domestic Product (billion USD)");
 
     // plot data
     svg.selectAll("rect")
@@ -87,17 +87,14 @@ xhr.onload = function() {
         .attr("class", "bar")
         .attr("data-date", d => d[0])
         .attr("data-gdp", d => d[1])
-        .on("mouseover", (e,d) => {
-            tooltip.text(d[1])
-                .attr("data-date", d[0])
-                .style("visibility", "visible");
-        })
+        .on("mouseover", (e,d) => tooltip
+            .html(d[0] + "<br/> $" + d[1] + " billion")
+            .attr("data-date", d[0])
+            .style("visibility", "visible")
+        )
         .on("mousemove", (e) => tooltip.style("left", (e.pageX + 30) + "px")
             .style("top", (e.pageY - 30) + "px"))
-        .on("mouseout", () => tooltip.style("visibility", "hidden"));
-
-           
-
-
+        .on("mouseout", () => tooltip.style("visibility", "hidden"));           
+        
 };
 xhr.send();

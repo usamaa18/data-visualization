@@ -1,21 +1,47 @@
-svg rect.bar {
-    fill: red;
+:root {
+    --highlight: white;
+}
 
+
+html {
+    background-color: #c2c2d6;
+}
+
+
+#root {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 960px;
+    height: 540px;
+}
+
+svg rect.bar {
+    fill: #C25B56;
+    
 }
 
 .bar:hover {
-    fill: lightblue;
+    fill: var(--highlight);
+    border: 2px solid black;
 }
 
 svg {
     border: 1px solid black;
+    border-radius: 1%;
+    background-color: white;
 }
 
 #tooltip {
     visibility: hidden;
-    position: absolute;
+    position: fixed;
     z-index: 10;
-    background-color: lightblue;
+    background-color: var(--highlight);
     padding: 10px;
+    border-radius: 5%;
+    border: 1px solid black;
 }
 
