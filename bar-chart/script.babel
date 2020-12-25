@@ -29,7 +29,7 @@ xhr.onload = function() {
         .range([paddingLeft, w - paddingRight]);
 
     const yScale = d3.scaleLinear()
-        .domain([d3.min(gdp), d3.max(gdp)])
+        .domain([0, d3.max(gdp)])
         .range([h - paddingBottom, paddingTop]);
 
 
