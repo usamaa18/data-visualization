@@ -1,0 +1,19 @@
+svg rect.bar {
+    fill: red;
+
+}
+
+.bar:hover {
+    fill: blue;
+}
+
+svg {
+    border: 1px solid black;
+}
+
+.tooltip-hidden {
+    visibility: hidden;
+    position: absolute;
+    z-index: 10;
+}
+
