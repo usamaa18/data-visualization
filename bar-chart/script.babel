@@ -1,10 +1,13 @@
 const url = "https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/GDP-data.json";
 const xhr = new XMLHttpRequest();
 
-const scale = 0.5;
+const scale = 0.6;
 const w = 1920 * scale;
 const h = 1080 * scale;
-const padding = 20;
+const paddingTop = 20;
+const paddingBottom = 30;
+const paddingLeft = 50;
+const paddingRight = 20;
 
 const svg = d3.select("#root")
     .append("svg")
@@ -23,15 +26,12 @@ xhr.onload = function() {
     const gdp = arrayColumn(json.data, 1);
     const xScale = d3.scaleTime()
         .domain([new Date(dates[0]), new Date(dates[dates.length - 1])])
-        .range([padding, w - padding]);
+        .range([paddingLeft, w - paddingRight]);
 
     const yScale = d3.scaleLinear()
         .domain([d3.min(gdp), d3.max(gdp)])
-        .range([h - padding, padding]);
+        .range([h - paddingBottom, paddingTop]);
 
-    const hScale = d3.scaleLinear()
-        .domain([d3.min(gdp), d3.max(gdp)])
-        .range([1, h]);
 
     let tooltip = d3.select("#root")
         .append("div")
@@ -44,7 +44,7 @@ xhr.onload = function() {
         .attr("x", d => xScale(new Date(d[0])))
         .attr("y", d => yScale(d[1]))
         .attr("width", (w/json.data.length) - 0.3)
-        .attr("height", d => h - yScale(d[1]))
+        .attr("height", d => h - yScale(d[1]) - paddingBottom)
         .attr("class", "bar")
         .on("mouseover", (e,d) => {
             tooltip.text(d[1])
@@ -54,7 +54,15 @@ xhr.onload = function() {
             .style("top", (e.pageY - 30) + "px"))
         .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
-    
+    const xAxis = d3.axisBottom(xScale);
+    svg.append("g")
+        .attr("transform", "translate(0, " + (h - paddingBottom) + ")")
+        .call(xAxis);
+
+    const yAxis = d3.axisLeft(yScale);
+    svg.append("g")
+        .attr("transform", "translate(" + (paddingLeft) + ", 0)")
+        .call(yAxis);   
 
 
 };
