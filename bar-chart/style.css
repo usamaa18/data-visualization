@@ -11,7 +11,7 @@ svg {
     border: 1px solid black;
 }
 
-.tooltip {
+#tooltip {
     visibility: hidden;
     position: absolute;
     z-index: 10;

@@ -4,15 +4,10 @@ const xhr = new XMLHttpRequest();
 const scale = 0.6;
 const w = 1920 * scale;
 const h = 1080 * scale;
-const paddingTop = 20;
-const paddingBottom = 30;
-const paddingLeft = 50;
-const paddingRight = 20;
-
-const svg = d3.select("#root")
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);
+const paddingTop = 90;
+const paddingBottom = 40;
+const paddingLeft = 60;
+const paddingRight = 30;
 
 const arrayColumn = (arr, n) => arr.map(x => x[n]);
 
@@ -35,7 +30,12 @@ xhr.onload = function() {
 
     let tooltip = d3.select("#root")
         .append("div")
-        .attr("class", "tooltip");
+        .attr("id", "tooltip");
+
+    const svg = d3.select("#root")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h);
         
     svg.selectAll("rect")
         .data(json.data)
@@ -46,8 +46,11 @@ xhr.onload = function() {
         .attr("width", (w/json.data.length) - 0.3)
         .attr("height", d => h - yScale(d[1]) - paddingBottom)
         .attr("class", "bar")
+        .attr("data-date", d => d[0])
+        .attr("data-gdp", d => d[1])
         .on("mouseover", (e,d) => {
             tooltip.text(d[1])
+                .attr("data-date", d[0])
                 .style("visibility", "visible");
         })
         .on("mousemove", (e) => tooltip.style("left", (e.pageX + 30) + "px")
@@ -56,13 +59,25 @@ xhr.onload = function() {
 
     const xAxis = d3.axisBottom(xScale);
     svg.append("g")
+        .attr("id", "x-axis")
         .attr("transform", "translate(0, " + (h - paddingBottom) + ")")
         .call(xAxis);
 
     const yAxis = d3.axisLeft(yScale);
     svg.append("g")
+        .attr("id", "y-axis")
         .attr("transform", "translate(" + (paddingLeft) + ", 0)")
-        .call(yAxis);   
+        .call(yAxis);
+
+
+    svg.append("text")
+        .attr("x", (w / 2))             
+        .attr("y", (paddingTop / 2))
+        .attr("id", "title")
+        .attr("text-anchor", "middle")  
+        .style("font-size", "32px")   
+        .text("US GDP");
+        
 
 
 };
