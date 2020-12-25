@@ -35,7 +35,7 @@ xhr.onload = function() {
 
     let tooltip = d3.select("#root")
         .append("div")
-        .attr("class", "tooltip-hidden");
+        .attr("class", "tooltip");
         
     svg.selectAll("rect")
         .data(json.data)
@@ -46,8 +46,15 @@ xhr.onload = function() {
         .attr("width", (w/json.data.length) - 0.3)
         .attr("height", d => h - yScale(d[1]))
         .attr("class", "bar")
-        .on("mouseover", (e,d) => tooltip.text(d[1]).style("visibility", "visible"))
-        .on("mouseout", e => tooltip.style("visibility", "hidden"));
+        .on("mouseover", (e,d) => {
+            tooltip.text(d[1])
+                .style("visibility", "visible");
+        })
+        .on("mousemove", (e) => tooltip.style("left", (e.pageX + 30) + "px")
+            .style("top", (e.pageY - 30) + "px"))
+        .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+    
 
 
 };

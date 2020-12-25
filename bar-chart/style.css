@@ -4,16 +4,18 @@ svg rect.bar {
 }
 
 .bar:hover {
-    fill: blue;
+    fill: lightblue;
 }
 
 svg {
     border: 1px solid black;
 }
 
-.tooltip-hidden {
+.tooltip {
     visibility: hidden;
     position: absolute;
     z-index: 10;
+    background-color: lightblue;
+    padding: 10px;
 }
 
