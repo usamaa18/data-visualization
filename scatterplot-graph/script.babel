@@ -13,10 +13,19 @@ xhr.onload = function() {
     const json = JSON.parse(xhr.responseText);
     console.log(json);
 
-    const parseTime = d3.timeParse("%M:%S");
-    const parseYear = d3.timeParse("%Y");
+    // dont use d3.timeParse(). It's epoch is set to Jan 1 1900,
+    // which is causing the y-axis time scale to shift to values that
+    // are not a multiple of 5 seconds: 
+    // const parseTime = d3.timeParse("%M:%S");
+    // as a result, I've also decided to opt-out of timeParse() for parseYear:
+    // const parseYear = d3.timeParse("%Y");
+    
+    // instead use built-in Date() constructor in JS
+    const parseTime = seconds => new Date(seconds*1000);
+    const parseYear = year => new Date(year, 0, 0, 0, 0, 0, 0);
+    
     const years = json.map(obj => parseYear(obj.Year));
-    const times = json.map(obj => parseTime(obj.Time));
+    const times = json.map(obj => parseTime(obj.Seconds));
 
     const xScale = d3.scaleTime()
         .domain([d3.min(years), d3.max(years)])
@@ -47,8 +56,5 @@ xhr.onload = function() {
         .attr("id", "y-axis")
         .attr("transform", "translate(" + margin.left + ", 0)")
         .call(yAxis);
-    
-    
-    console.log(parseTime("39:44"));
 };
 xhr.send();
