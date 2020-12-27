@@ -16,7 +16,7 @@ xhr.onload = function() {
     const parseTime = d3.timeParse("%M:%S");
     const parseYear = d3.timeParse("%Y");
     const years = json.map(obj => parseYear(obj.Year));
-    const times = json.map(obj => obj.Time);
+    const times = json.map(obj => parseTime(obj.Time));
 
     const xScale = d3.scaleTime()
         .domain([d3.min(years), d3.max(years)])
