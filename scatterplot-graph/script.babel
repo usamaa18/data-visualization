@@ -6,7 +6,7 @@ const scale = 0.5;
 const w = 1920*scale;
 const h = 1080*scale;
 const margin = {
-    top: 20, bottom: 20, left: 40, right: 20
+    top: 40, bottom: 20, left: 40, right: 20
 };
 
 xhr.onload = function() {
@@ -29,32 +29,88 @@ xhr.onload = function() {
 
     const xScale = d3.scaleTime()
         .domain([d3.min(years), d3.max(years)])
-        .range([margin.left, w - margin.right]);
+        .range([margin.left, w - margin.right])
+        ;
 
     const yScale = d3.scaleTime()
         .domain([d3.min(times), d3.max(times)])
-        .range([margin.top, h - margin.bottom]);
+        .range([margin.top, h - margin.bottom])
+        .nice();
+
+    // tooltip
+    const tooltip = d3.select("#root")
+        .append("div")
+        .attr("id", "tooltip")
+        .style("opacity", "0");
+    
 
     const svg = d3.select("#root")
         .append("svg")
         .attr("height", h)
         .attr("width", w);
+
+    // title
+    svg.append("text")
+        .attr("x", (w / 2))             
+        .attr("y", (margin.top / 2))
+        .attr("id", "title")
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px")   
+        .text("Doping");
     
+    // x-axis
     const xAxis = d3.axisBottom(xScale);
     svg.append("g")
         .attr("id", "x-axis")
         .attr("transform", "translate(0, " + (h - margin.bottom) + ")")
         .call(xAxis);
     
-    const yAxis = d3.axisLeft(yScale)
-        .ticks(d3.timeSecond.every(15))
-        .tickFormat(d => {  
-            console.log(d);
-            return d3.timeFormat("%M:%S")(d);
-        });
+    // y-axis
+    const yAxis = d3.axisLeft(yScale).tickFormat(d => d3.timeFormat("%M:%S")(d));
     svg.append("g")
         .attr("id", "y-axis")
         .attr("transform", "translate(" + margin.left + ", 0)")
         .call(yAxis);
+
+    // plot
+    svg.selectAll("circle")
+        .data(json)
+        .enter()
+        .append("circle")
+        .attr("cx", (d,i) => xScale(years[i]))
+        .attr("cy", (d,i) => yScale(times[i]))
+        .attr("r", 5)
+        .attr("fill", d => d.Doping == "" ? "green" : "red")
+        .attr("class", "dot")
+        .attr("data-xvalue", (d,i) => years[i])
+        .attr("data-yvalue", (d,i) => times[i])
+        .attr("stroke", "black")
+        .attr("opacity", "0.7")
+        .on("mouseover", (e,d) => {
+            let html = d.Name + " (" + d.Nationality + ")<br/>"
+            + "Year: " + d.Year + " Time: " + d.Time + "<br/>";
+            if (d.Doping != "") {
+               html += ("<br/>" + d.Doping)
+            }
+            tooltip.html(html)
+                .attr("data-year", parseYear(d.Year))
+                .style("left", (e.pageX+10) + "px")		
+                .style("top", (e.pageY-10) + "px");
+
+            tooltip.transition()
+                .duration(100)
+                .style("opacity", 1);
+        })
+        .on("mouseout", (e,d) => {
+            console.log("haha");
+            tooltip.transition()
+                .duration(100)
+                .style("opacity", 0);
+        })
+
+        ;
+
+
+    
 };
 xhr.send();
