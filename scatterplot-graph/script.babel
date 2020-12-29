@@ -113,9 +113,13 @@ xhr.onload = function() {
 
     const keys = ["No doping allegations", "Riders with doping allegations"];
     const colors = ["green", "red"];
-    // legend
     const size = 15;
-    svg.selectAll("legendSquares")
+    const legend = svg
+        .append("g")
+        .attr("id", "legend");
+
+    // legend
+    legend.selectAll("legendSquares")
         .data(keys)
         .enter()
         .append("rect")
@@ -129,7 +133,7 @@ xhr.onload = function() {
         .append("text")
         .text("teest");
 
-    svg.selectAll("legendLabels")
+    legend.selectAll("legendLabels")
         .data(keys)
         .enter()
         .append("text")
