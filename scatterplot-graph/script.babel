@@ -25,15 +25,14 @@ xhr.onload = function() {
     
     // instead use built-in Date() constructor in JS
     const parseTime = seconds => new Date(seconds*1000);
-    const parseYear = year => new Date(year, 0, 0, 0, 0, 0, 0);
+    const parseYear = year => year
     
     const years = json.map(obj => parseYear(obj.Year));
     const times = json.map(obj => parseTime(obj.Seconds));
 
-    const xScale = d3.scaleTime()
-        .domain([d3.min(years), d3.max(years)])
-        .range([margin.left, w - margin.right])
-        ;
+    const xScale = d3.scaleLinear()
+        .domain([d3.min(years) - 1, d3.max(years) + 1])
+        .range([margin.left, w - margin.right]);
 
     const yScale = d3.scaleTime()
         .domain([d3.min(times), d3.max(times)])
@@ -62,7 +61,7 @@ xhr.onload = function() {
         .html("Doping in Professional Bicycle Racing: 35 Fastest times up Alpe d'Huez");
     
     // x-axis
-    const xAxis = d3.axisBottom(xScale);
+    const xAxis = d3.axisBottom(xScale).tickFormat(d => d);
     svg.append("g")
         .attr("id", "x-axis")
         .attr("transform", "translate(0, " + (h - margin.bottom) + ")")
