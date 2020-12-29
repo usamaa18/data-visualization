@@ -7,10 +7,20 @@ body {
 #root {
     position: block;
     margin: auto;
-    width: 920px;
-    height: 630px;
+    width: 1200px;
+    height: 500px;
 }
 
+rect.cell {
+    stroke-width: 1px;
+}
+
+rect.cell:hover {
+    stroke: black;
+    pointer-events: all;
+    z-index: 0;
+    
+}
 
 #tooltip {
     position: absolute;			
