@@ -1,0 +1,16 @@
+const url = "https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json";
+const xhr = new XMLHttpRequest();
+xhr.open("GET", url, true);
+
+const scale = 1;
+const w = 920*scale;
+const h = 630*scale;
+const margin = {
+    top: 70, bottom: 20, left: 40, right: 20
+};
+
+xhr.onload = function() {
+    const json = JSON.parse(xhr.responseText);
+    console.log(json);
+};
+xhr.send();
