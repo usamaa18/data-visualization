@@ -1,5 +1,21 @@
+html {
+    background-color: white;
+}
+
+
+#root {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 960px;
+    height: 540px;
+}
+
 #tooltip {
-    position: absolute;			
+    position: fixed;			
     text-align: start;								
     padding: 10px;				
     font: 12px sans-serif;		
