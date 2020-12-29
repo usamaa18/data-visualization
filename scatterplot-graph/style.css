@@ -1,18 +1,16 @@
-html {
+body {
     background-color: white;
+    height: 100%;
 }
 
 
 #root {
-    position: absolute;
+    position: block;
     margin: auto;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 960px;
-    height: 540px;
+    width: 920px;
+    height: 630px;
 }
+
 
 #tooltip {
     position: fixed;			
