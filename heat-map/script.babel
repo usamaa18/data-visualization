@@ -6,7 +6,7 @@ const scale = 1;
 const w = 1200*scale;
 const h = 500*scale;
 const margin = {
-    top: 70, bottom: 20, left: 60, right: 20
+    top: 20, bottom: 20, left: 60, right: 20
 };
 const monthMap = {
     1: "January", 2: "February", 3: "March", 4: "April",
@@ -22,17 +22,25 @@ for (let i=0; i<=numColors-1; i++) {
 }
 console.log(colorMap);
 
+d3.select("#root")
+    .append("h2")
+    .attr("id", "title")
+    .text("Monthly Global Land-Surface Temperature")
+    .style("top", margin.top/2)
+    .style("left", w/2);
+
+
 xhr.onload = function() {
     const json = JSON.parse(xhr.responseText);
     const data = json.monthlyVariance;
     const baseTemp = json.baseTemperature;
     console.log(json);
 
-    // adjust width to fit data perfectly
-
 
     const years = data.map(d => d.year);
-    const xDomain = [d3.min(years)-0.5, d3.max(years)+0.5];
+    const minYear = d3.min(years);
+    const maxYear = d3.max(years);
+    const xDomain = [minYear-0.5, maxYear+0.5];
     const xScale = d3.scaleLinear()
         .domain(xDomain)
         .range([margin.left, w-margin.right]);
@@ -41,6 +49,14 @@ xhr.onload = function() {
         .domain([0.5, 12.5])
         .range([margin.top, h-margin.bottom])
         ;
+
+    // description
+    d3.select("#root")
+        .append("h2")
+        .attr("id", "description")
+        .style("top", margin.top/2)
+        .style("left", w/2)
+        .text("Years: " + minYear + " - " + maxYear + ", Base Temperature: " + baseTemp + "\u00B0C");
 
     const variances = data.map(d => d.variance)
     const colorScale = d3.scaleQuantize()
@@ -62,6 +78,11 @@ xhr.onload = function() {
         .attr("id", "x-axis")
         .attr("transform", "translate(0, " + (h - margin.bottom) + ")")
         .call(xAxis);
+        // .append("text")
+        // .attr("x", (w/2))
+        // .attr("y", h - 10)
+        // .attr("text-anchor", "middle")
+        // .text("Year");
 
     const yAxis = d3.axisLeft(yScale).tickFormat(d => monthMap[d]);
     svg.append("g")
@@ -90,6 +111,8 @@ xhr.onload = function() {
                 + (baseTemp + d.variance).toFixed(2) + "\u00B0C (" + d.variance.toFixed(2) + "\u00B0C)";
             tooltip.html(html)
                 .attr("data-year", d.year)
+                .attr("data-temp", baseTemp + d.variance)
+                .attr("data-month", monthMap[d.month])
                 .style("top", (e.pageY - 10) + "px")
                 .style("left", (e.pageX + 10) + "px")
             tooltip.transition()
@@ -102,7 +125,7 @@ xhr.onload = function() {
                 .style("top", (e.pageY - 10) + "px")
                 .style("left", (e.pageX + 10) + "px")
         })
-        .on("mouseout", (e,d) => {
+        .on("mouseout", () => {
             tooltip.transition()
                 .duration(100)
                 .style("opacity", 0);
