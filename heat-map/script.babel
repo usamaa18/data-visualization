@@ -6,7 +6,7 @@ const scale = 1;
 const w = 1200*scale;
 const h = 500*scale;
 const margin = {
-    top: 20, bottom: 20, left: 60, right: 20
+    top: 20, bottom: 100, left: 60, right: 20
 };
 const monthMap = {
     1: "January", 2: "February", 3: "March", 4: "April",
@@ -59,8 +59,9 @@ xhr.onload = function() {
         .text("Years: " + minYear + " - " + maxYear + ", Base Temperature: " + baseTemp + "\u00B0C");
 
     const variances = data.map(d => d.variance)
+    const colorDomain = [baseTemp+d3.min(variances), baseTemp+d3.max(variances)];
     const colorScale = d3.scaleQuantize()
-        .domain([baseTemp+d3.min(variances), baseTemp+d3.max(variances)])
+        .domain(colorDomain)
         .range(colorMap);
     
     const tooltip = d3.select("#root")
@@ -89,6 +90,38 @@ xhr.onload = function() {
         .attr("id", "y-axis")
         .attr("transform", "translate(" + (margin.left) + ", 0)")
         .call(yAxis);
+
+    // legend
+    const legend = svg
+        .append("g")
+        .attr("id", "legend");
+    
+    const size = 30;
+    legend.selectAll(".rectLegend")
+        .data(colorMap)
+        .enter()
+        .append("rect")
+        .attr("height", size)
+        .attr("width", size)
+        .attr("x", (d,i) => 25 + margin.left + i*size)
+        .attr("y", h-margin.bottom/2)
+        .attr("fill", d => d);
+
+    // very complex solution to add x-axis to legend
+    const legendXScale = d3.scaleLinear()
+        .domain(colorDomain)
+        .range([25 + margin.left - 1, 25 + margin.left + numColors*size]);
+    const tickVals = Array(numColors+1);
+    for (let i=0; i<numColors; i++) {
+        tickVals[i] = colorScale.invertExtent(colorMap[i])[0];
+    }
+    tickVals[numColors] = colorScale.invertExtent(colorMap[numColors-1])[1];
+    console.log(tickVals);
+    const legendXAxis = d3.axisBottom(legendXScale).tickValues(tickVals).tickFormat(d => d.toFixed(1));
+    legend.append("g")
+        .attr("transform", "translate(0," + (h+size-margin.bottom/2) + ")")
+        .call(legendXAxis);
+
 
     const rectWidth = (w - margin.left - margin.right)/(xDomain[1]-xDomain[0]);
     const rectHeight = (h - margin.top - margin.bottom)/12;
@@ -130,7 +163,6 @@ xhr.onload = function() {
                 .duration(100)
                 .style("opacity", 0);
         });
-
     
 };
 xhr.send();
