@@ -97,7 +97,8 @@ xhr.onload = function() {
         .attr("id", "legend");
     
     const size = 30;
-    legend.selectAll(".rectLegend")
+    legend.append("g")
+        .selectAll("rect")
         .data(colorMap)
         .enter()
         .append("rect")
@@ -105,7 +106,8 @@ xhr.onload = function() {
         .attr("width", size)
         .attr("x", (d,i) => 25 + margin.left + i*size)
         .attr("y", h-margin.bottom/2)
-        .attr("fill", d => d);
+        .attr("fill", d => d)
+        .attr("stroke", "black");
 
     // very complex solution to add x-axis to legend
     const legendXScale = d3.scaleLinear()
@@ -126,7 +128,9 @@ xhr.onload = function() {
     const rectWidth = (w - margin.left - margin.right)/(xDomain[1]-xDomain[0]);
     const rectHeight = (h - margin.top - margin.bottom)/12;
     console.log(rectWidth);
-    svg.selectAll("rect")
+    svg.append("g")
+        .attr("id", "map")
+        .selectAll("rect")
         .data(data)
         .enter()
         .append("rect")
